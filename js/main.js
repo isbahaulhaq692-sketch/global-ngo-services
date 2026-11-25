@@ -214,6 +214,9 @@
   }
 
   function openServiceModal(service, trigger) {
+    if (typeof window.trackAnalyticsEvent === "function") {
+      window.trackAnalyticsEvent("service_detail_open");
+    }
     returnFocusTo = trigger;
     document.getElementById("modalTitle").textContent = service.name;
     document.getElementById("modalDescription").textContent = service.shortDescription;
@@ -357,6 +360,9 @@
       const result = await response.json();
       if (!result.success) throw new Error(result.message || "Web3Forms did not accept the enquiry.");
 
+      if (typeof window.trackAnalyticsEvent === "function") {
+        window.trackAnalyticsEvent("contact_form_success");
+      }
       form.reset();
       formStatus.textContent = messages.success;
       clearContactWhatsAppFallback();
@@ -448,6 +454,9 @@
       const result = await response.json();
       if (!result.success) throw new Error(result.message || "Web3Forms did not accept the review.");
 
+      if (typeof window.trackAnalyticsEvent === "function") {
+        window.trackAnalyticsEvent("review_form_success");
+      }
       reviewForm.reset();
       reviewStatus.textContent = messages.success;
     } catch (error) {

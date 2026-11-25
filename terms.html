@@ -8,13 +8,15 @@
   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-5MK3387T');</script>
   <!-- End Google Tag Manager -->
-  <!-- Google tag (gtag.js) — GA4 direct load -->
+  <!-- Google tag (gtag.js) — initialises window.gtag() for G-9FTRDCXHPM.
+       send_page_view: false — page_view is fired by the GTM GA4 tag. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FTRDCXHPM"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-9FTRDCXHPM', {
+      send_page_view: false,
       anonymize_ip: true,
       allow_google_signals: false,
       allow_ad_personalization_signals: false,

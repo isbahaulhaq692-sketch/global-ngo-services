@@ -1,118 +1,139 @@
 /**
  * Global NGO Services — Analytics Event Tracking
- * Privacy-safe GA4 events via gtag() and dataLayer.
+ * Privacy-safe, lightweight GA4 events via window.gtag() and dataLayer.
  *
- * Rules enforced here:
- *  - No form contents, personal data, phone numbers or email addresses are sent.
- *  - No user-provided text is transmitted.
- *  - Events fire at most once per interaction (no duplicate firing).
- *  - gtag() is called only after it is defined by the GA4 script in <head>.
+ * Architecture:
+ *  - GTM (GTM-5MK3387T) fires the page_view through its GA4 Configuration tag.
+ *  - This file fires custom interaction events only. No page_view is sent here.
+ *  - window.gtag() is defined by the Google tag initialisation in <head>.
+ *
+ * Privacy rules enforced here:
+ *  - No form contents, names, phone numbers, email addresses or personal data sent.
+ *  - No user-entered text is transmitted in any event parameter.
+ *  - Events fire at most once per interaction (delegated listeners, no duplicates).
+ *  - Service IDs are URL slugs only (e.g. "csr-1-registration"), not personal data.
  */
 (() => {
   "use strict";
 
   /**
-   * Push a named event to both GA4 (via gtag) and the GTM dataLayer.
+   * Push a named event to GA4 (via gtag) and to the GTM dataLayer.
    * Parameters must never contain PII.
    *
-   * @param {string} eventName  - Snake_case event name.
-   * @param {Object} [params]   - Optional, non-PII parameters only.
+   * @param {string} eventName - Snake_case GA4 event name.
+   * @param {Object} [params]  - Optional non-PII parameters.
    */
   function track(eventName, params) {
-    // Send to GA4 directly via gtag (defined in <head>)
+    // Send to GA4 via window.gtag (initialised in <head>)
     if (typeof window.gtag === "function") {
       window.gtag("event", eventName, params || {});
     }
-    // Also push to dataLayer so GTM can pick up custom tags if configured
+    // Also push to dataLayer so GTM can pick up events via custom triggers
     if (Array.isArray(window.dataLayer)) {
-      window.dataLayer.push(
-        Object.assign({ event: eventName }, params || {})
-      );
+      window.dataLayer.push(Object.assign({ event: eventName }, params || {}));
     }
   }
 
-  // Expose for use by main.js if needed
+  // Expose for optional use by other scripts (e.g. main.js)
   window.trackAnalyticsEvent = track;
 
-  /**
-   * Single delegated click listener — avoids attaching multiple handlers.
-   * Determines event type from the clicked element's href or class.
-   */
+  // ─── Single delegated click listener ────────────────────────────────────────
+  // One listener handles all link/button click tracking to avoid duplication.
   document.addEventListener("click", (e) => {
-    const link = e.target instanceof Element
-      ? e.target.closest("a[href], button[type]")
-      : null;
-    if (!link) return;
+    if (!(e.target instanceof Element)) return;
 
+    // ── Service card "Know More" modal ───────────────────────────────────────
+    const knowMoreBtn = e.target.closest(".know-more");
+    if (knowMoreBtn) {
+      const card = knowMoreBtn.closest("[data-service-id]");
+      // service_id is a URL slug, e.g. "fcra-registration" — not personal data
+      track("service_view", { service_id: card ? card.dataset.serviceId : "unknown" });
+      return;
+    }
+
+    // ── Link clicks ──────────────────────────────────────────────────────────
+    const link = e.target.closest("a[href]");
+    if (!link) return;
     const href = link.getAttribute("href") || "";
 
-    // Phone click
+    // Phone
     if (href.startsWith("tel:")) {
-      track("click_call", { link_type: "phone" });
+      track("click_call");
       return;
     }
-
-    // Email click
+    // Email
     if (href.startsWith("mailto:")) {
-      track("click_email", { link_type: "email" });
+      track("click_email");
       return;
     }
-
-    // WhatsApp click (wa.me or api.whatsapp.com)
+    // WhatsApp
     if (/^https?:\/\/(?:wa\.me|api\.whatsapp\.com)/i.test(href)) {
-      track("click_whatsapp", { link_type: "whatsapp" });
+      track("click_whatsapp");
       return;
     }
-
-    // Instagram click
+    // Instagram
     if (/instagram\.com/i.test(href)) {
-      track("click_instagram", { link_type: "instagram" });
+      track("click_instagram");
       return;
     }
-
-    // CTA clicks — Free Consultation button / contact section links
+    // Free Consultation CTA (nav button or btn linking to #contact)
     if (
       link.classList.contains("nav-consultation") ||
       (href.includes("#contact") && link.classList.contains("btn"))
     ) {
-      track("consultation_cta_click", { cta_location: "nav" });
+      track("consultation_cta_click");
+      return;
+    }
+    // Internal navigation links (#section anchors in nav)
+    if (href.startsWith("#") && link.closest(".main-nav")) {
+      track("navigation_click", { nav_target: href });
       return;
     }
   });
 
-  /**
-   * Service card "Know More" — fires service_view when modal opens.
-   * Delegates from the grid container so it works after dynamic rendering.
-   */
-  document.addEventListener("click", (e) => {
-    const btn = e.target instanceof Element
-      ? e.target.closest(".know-more")
-      : null;
-    if (!btn) return;
+  // ─── Language toggle ─────────────────────────────────────────────────────────
+  // Fires when the user switches between English and Hindi.
+  const langToggle = document.getElementById("languageToggle");
+  if (langToggle) {
+    langToggle.addEventListener("click", () => {
+      // After the click, the button text has already toggled to the NEW language label
+      const newLang = langToggle.textContent.trim() === "English" ? "hi" : "en";
+      track("language_switch", { language: newLang });
+    });
+  }
 
-    const card = btn.closest("[data-service-id]");
-    const serviceId = card ? card.dataset.serviceId : "unknown";
-    // Service ID is a slug like "csr-1-registration" — not PII
-    track("service_view", { service_id: serviceId });
-  });
-
-  /**
-   * Contact section visibility — fires contact_section_view once
-   * when the #contact section enters the viewport.
-   */
+  // ─── Contact section visibility ──────────────────────────────────────────────
+  // Fires once when the Contact section scrolls into view.
   const contactSection = document.getElementById("contact");
   if (contactSection && "IntersectionObserver" in window) {
-    let fired = false;
-    const obs = new IntersectionObserver((entries) => {
+    let contactFired = false;
+    const contactObs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && !fired) {
-          fired = true;
+        if (entry.isIntersecting && !contactFired) {
+          contactFired = true;
           track("contact_section_view");
-          obs.disconnect();
+          contactObs.disconnect();
         }
       });
     }, { threshold: 0.25 });
-    obs.observe(contactSection);
+    contactObs.observe(contactSection);
+  }
+
+  // ─── Services section visibility ─────────────────────────────────────────────
+  // Fires once when the Services section scrolls into view.
+  const servicesSection = document.getElementById("services");
+  if (servicesSection && "IntersectionObserver" in window) {
+    let servicesFired = false;
+    const servicesObs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !servicesFired) {
+          servicesFired = true;
+          track("services_section_view");
+          servicesObs.disconnect();
+        }
+      });
+    }, { threshold: 0.2 });
+    servicesObs.observe(servicesSection);
   }
 
 })();

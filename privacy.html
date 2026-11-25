@@ -9,14 +9,14 @@
   })(window,document,'script','dataLayer','GTM-MQ6JLN38');</script>
   <!-- End Google Tag Manager -->
   <!-- Google tag (gtag.js) — initialises window.gtag() for G-9FTRDCXHPM.
-       send_page_view: false — page_view is fired by the GTM GA4 tag. -->
+       send_page_view: true ensures GA4 receives page_view data reliably. -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FTRDCXHPM"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-9FTRDCXHPM', {
-      send_page_view: false,
+      send_page_view: true,
       anonymize_ip: true,
       allow_google_signals: false,
       allow_ad_personalization_signals: false,

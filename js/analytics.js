@@ -3,7 +3,9 @@
  * Privacy-safe, lightweight GA4 events via window.gtag() and dataLayer.
  *
  * Architecture:
- *  - GTM (GTM-5MK3387T) fires the page_view through its GA4 Configuration tag.
+ *  - GTM (GTM-MQ6JLN38) is installed on all pages and may also fire page_view.
+ *  - The direct gtag.js (G-9FTRDCXHPM) with send_page_view:true ensures GA4
+ *    receives page_view data reliably from every page.
  *  - This file fires custom interaction events only. No page_view is sent here.
  *  - window.gtag() is defined by the Google tag initialisation in <head>.
  *

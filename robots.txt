@@ -1,4 +1,3 @@
-# TODO: Replace YOUR-DOMAIN.com with the production domain after deployment.
 User-agent: *
 Allow: /
 
@@ -8,4 +7,4 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-Sitemap: https://YOUR-DOMAIN.com/sitemap.xml
+Sitemap: https://global-ngo-services.vercel.app/sitemap.xml

@@ -101,7 +101,7 @@ window.TRANSLATIONS = {
     },
     reviews: {
       formTitle: "Share your experience",
-      description: "Send your review to our team on WhatsApp. We will publish it only with your permission.",
+      description: "Your review is sent to our team through Web3Forms. If submission fails, you can send it on WhatsApp. We publish reviews only with your permission.",
       nameLabel: "Your Name",
       ratingLabel: "Your Rating",
       ratingPlaceholder: "Choose a rating",
@@ -220,7 +220,7 @@ window.TRANSLATIONS = {
     },
     reviews: {
       formTitle: "अपना अनुभव साझा करें",
-      description: "अपनी समीक्षा WhatsApp पर हमारी टीम को भेजें। आपकी अनुमति के बिना इसे प्रकाशित नहीं किया जाएगा।",
+      description: "आपकी समीक्षा Web3Forms के ज़रिए हमारी टीम को भेजी जाती है। सबमिशन विफल होने पर आप इसे WhatsApp पर भेज सकते हैं। आपकी अनुमति के बिना इसे प्रकाशित नहीं किया जाएगा।",
       nameLabel: "आपका नाम",
       ratingLabel: "आपकी रेटिंग",
       ratingPlaceholder: "रेटिंग चुनें",

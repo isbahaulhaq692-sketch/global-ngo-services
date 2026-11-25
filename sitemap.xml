@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: Replace YOUR-DOMAIN.com with the production domain after deployment. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://YOUR-DOMAIN.com/</loc>
+    <loc>https://global-ngo-services.vercel.app/</loc>
   </url>
   <url>
-    <loc>https://YOUR-DOMAIN.com/privacy.html</loc>
+    <loc>https://global-ngo-services.vercel.app/privacy.html</loc>
   </url>
   <url>
-    <loc>https://YOUR-DOMAIN.com/terms.html</loc>
+    <loc>https://global-ngo-services.vercel.app/terms.html</loc>
   </url>
 </urlset>

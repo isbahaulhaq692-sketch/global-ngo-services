@@ -27,7 +27,7 @@ a { color: inherit; text-decoration: none; }
 .main-nav a:hover::after, .main-nav a.active::after { left: 0; right: 0; }
 .main-nav a.active { color: var(--blue); }
 .nav-phone { margin-left: 30px; display: flex; align-items: center; gap: 9px; color: var(--navy); }
-.phone-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--pale); color: var(--blue); display: grid; place-items: center; font-size: 18px; }
+.phone-icon { width: 48px; height: 48px; border-radius: 50%; background: #2563EB; color: #fff; display: grid; place-items: center; font-size: 18px; }
 .phone-icon svg, .btn-phone svg, .contact-details svg { width: 21px; height: 21px; fill: currentColor; }
 .icon-handset { fill: none !important; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .contact-brand-icon { width: 21px; height: 21px; object-fit: contain; object-position: center; }

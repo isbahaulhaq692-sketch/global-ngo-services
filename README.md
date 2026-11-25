@@ -33,6 +33,37 @@ Then open `http://127.0.0.1:4173/`.
 
 The contact form uses a Web3Forms client-side access key configured in `js/main.js`. Web3Forms access keys are intended for public client-side use. Do not add passwords, private API tokens, or other secrets to frontend files.
 
+## Analytics
+
+This website uses Google Tag Manager (container **GTM-MQ6JLN38**) to manage analytics tags. Google Analytics 4 (measurement ID **G-9FTRDCXHPM**) is loaded through GTM.
+
+### Architecture
+
+- All three HTML pages load the official GTM head snippet and noscript fallback.
+- A direct `gtag.js` initialisation is included on each page with `send_page_view: false` so that the GTM GA4 Configuration tag owns page-view firing and no duplicate events are sent.
+- `js/analytics.js` fires lightweight, privacy-safe custom events (phone clicks, WhatsApp clicks, service views, language switches, etc.) through `window.gtag()` and `window.dataLayer`. No personal information or form contents are included in any event parameter.
+
+### Privacy settings
+
+| Setting | Value |
+|---------|-------|
+| `send_page_view` (code-side) | `false` — GTM fires page_view |
+| `anonymize_ip` | `true` |
+| `allow_google_signals` | `false` |
+| `allow_ad_personalization_signals` | `false` |
+
+### GTM dashboard setup required
+
+After deploying, publish a **GA4 Configuration tag** in the GTM container:
+
+1. Go to [tagmanager.google.com](https://tagmanager.google.com) → container GTM-MQ6JLN38.
+2. Tags → New → **Google Analytics: GA4 Configuration**.
+3. Measurement ID: `G-9FTRDCXHPM`.
+4. Trigger: **All Pages**.
+5. Submit and publish the container version.
+
+After publishing, verify in GTM Preview mode and in GA4 Realtime reports.
+
 ## Deploy on Vercel
 
 This is a static site with no build or install step. Use the repository root as the project root and configure:
